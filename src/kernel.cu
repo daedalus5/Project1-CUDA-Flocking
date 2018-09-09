@@ -6,7 +6,7 @@
 #include "utilityCore.hpp"
 #include "kernel.h"
 
-//#define cellWidthTwoX
+#define cellWidthTwoX
 #ifndef cellWidthTwoX
 #define cellWidthOneX
 #endif
@@ -440,14 +440,14 @@ __global__ void kernUpdateVelNeighborSearchScattered(
 	glm::vec3 boidCell = (pos[particleArrayIndices[index]] - gridMin) * inverseCellWidth;
 	int cell_i = (int)(boidCell[0]);
 	int cell_j = (int)(boidCell[1]);
-	int cell_k = (int)(boidCell [2]);
+	int cell_k = (int)(boidCell[2]);
 	int boidCellIndex = gridIndex3Dto1D(cell_i, cell_j, cell_k, gridResolution);
 
 	// Identify which cells may contain neighbors. This isn't always 8.
 #ifdef cellWidthTwoX
-	int cell_2i = (int)(boidCell[0] * 0.5);
-	int cell_2j = (int)(boidCell[1] * 0.5);
-	int cell_2k = (int)(boidCell[2] * 0.5);
+	int cell_2i = (int)(boidCell[0] * 2.0);
+	int cell_2j = (int)(boidCell[1] * 2.0);
+	int cell_2k = (int)(boidCell[2] * 2.0);
 
 	cell_2i = cell_2i % 2;
 	cell_2j = cell_2j % 2;
@@ -570,9 +570,9 @@ __global__ void kernUpdateVelNeighborSearchCoherent(
 
 	// Identify which cells may contain neighbors. This isn't always 8.
 #ifdef cellWidthTwoX
-	int cell_2i = (int)(boidCell[0] * 0.5);
-	int cell_2j = (int)(boidCell[1] * 0.5);
-	int cell_2k = (int)(boidCell[2] * 0.5);
+	int cell_2i = (int)(boidCell[0] * 2.0);
+	int cell_2j = (int)(boidCell[1] * 2.0);
+	int cell_2k = (int)(boidCell[2] * 2.0);
 
 	cell_2i = cell_2i % 2;
 	cell_2j = cell_2j % 2;
@@ -628,7 +628,7 @@ __global__ void kernUpdateVelNeighborSearchCoherent(
 		// For each cell, read the start/end indices in the boid pointer array.
 		int startIdx = gridCellStartIndices[neighbors[i]];
 		int endIdx = gridCellEndIndices[neighbors[i]];
-		if (startIdx == -1 && endIdx == -1) {
+		if (startIdx == -1) {
 			continue;
 		}
 		for (int j = startIdx; j <= endIdx; ++j) {
@@ -773,7 +773,7 @@ void Boids::stepSimulationCoherentGrid(float dt) {
 
 	glm::vec3* temp2 = dev_shufflePos;
 	dev_shufflePos = dev_pos;
-	dev_pos = dev_shufflePos;
+	dev_pos = temp2;
 }
 
 void Boids::endSimulation() {
