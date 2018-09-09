@@ -78,3 +78,10 @@ void runCUDA();
 bool init(int argc, char **argv);
 void initVAO();
 void initShaders(GLuint *program);
+
+//====================================
+// output
+//====================================
+std::ofstream outputFile;
+int count;
+float FPStotal;

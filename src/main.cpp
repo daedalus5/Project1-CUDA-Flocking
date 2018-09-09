@@ -14,8 +14,8 @@
 
 // LOOK-2.1 LOOK-2.3 - toggles for UNIFORM_GRID and COHERENT_GRID
 #define VISUALIZE 1
-#define UNIFORM_GRID 0
-#define COHERENT_GRID 0
+#define UNIFORM_GRID 1
+#define COHERENT_GRID 1
 
 // LOOK-1.2 - change this to adjust particle count in the simulation
 const int N_FOR_VIS = 5000;
@@ -28,8 +28,30 @@ int main(int argc, char* argv[]) {
   projectName = "565 CUDA Intro: Boids";
 
   if (init(argc, argv)) {
+	count = 0;
+	FPStotal = 0;
+
     mainLoop();
     Boids::endSimulation();
+
+	outputFile.open("FPS_Data.txt", std::ios::out | std::ios::app);
+
+	std::string test = "";
+	if (VISUALIZE)
+		test += "VIS+";
+	else
+		test += "NO_VIS+";
+	if (UNIFORM_GRID && COHERENT_GRID)
+		test += "COHERENT_GRID";
+	else if (UNIFORM_GRID)
+		test += "UNIFORM_GRID";
+	else
+		test += "NO_GRID";
+
+	outputFile << test << "+" << N_FOR_VIS << "+" << 128 << ": ";
+	outputFile << FPStotal / (count-1) << std::endl;
+
+	outputFile.close();
     return 0;
   } else {
     return 1;
@@ -230,6 +252,12 @@ void initShaders(GLuint * program) {
         fps = frame / (time - timebase);
         timebase = time;
         frame = 0;
+
+		if (count == 0) {}
+		else {
+			FPStotal += fps;
+		}
+		count++;
       }
 
       runCUDA();
