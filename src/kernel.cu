@@ -6,7 +6,7 @@
 #include "utilityCore.hpp"
 #include "kernel.h"
 
-#define cellWidthTwoX
+//#define cellWidthTwoX
 #ifndef cellWidthTwoX
 #define cellWidthOneX
 #endif
