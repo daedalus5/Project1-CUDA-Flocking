@@ -28,12 +28,14 @@ The most basic question one may ask about this simulation's performance is how f
 
 ![graph1](images/PerformanceFPSasaFunctionofBoidCountVIS128TBB.png)
 
-As the above graph indicates, there is a dip in performance when N=5000, meaning that performance actually increases with boid count immediately afterwards. This may be a consequence of buffer memory allocations on the GPU, but as will 
+As the above graph indicates, there is a dip in performance when N=5000, meaning that performance actually increases with boid count immediately afterwards. This may be a consequence of how memory is allocated on the GPU, but this distribution doesn't appear to vary with GPU blocksize. 
 
 Grid Type Comparison with and without Visualization
 ------------
 
-![graph2](images/Grid FPSComparison128TBB.png)
+As expected, turning off the simulation visualization dramatically increases sim FPS.
+
+![graph2](images/GridFPSComparison128TBB.png)
 
 Comparing Neighborhood Search Algorithms
 ------------
