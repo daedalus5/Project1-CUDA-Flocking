@@ -361,13 +361,9 @@ __global__ void kernUpdatePos(int N, float dt, glm::vec3 *pos, glm::vec3 *vel) {
 //            for(y)
 //             for(z)? Or some other order?
 __device__ int gridIndex3Dto1D(int x, int y, int z, int gridResolution) {
-	// boid wrapping
-	x = x < 0 ? gridResolution - 1 : x;
-	x = x > gridResolution - 1 ? 1 : x;
-	y = y < 0 ? gridResolution - 1 : y;
-	y = y > gridResolution - 1 ? 1 : y;
-	z = z < 0 ? gridResolution - 1 : z;
-	z = z > gridResolution - 1 ? 1 : z;
+	if (x < 0 || x >= gridResolution || y < 0 || y >= gridResolution || z < 0 || z >= gridResolution) {
+		return -1;
+	}
 	return x + y * gridResolution + z * gridResolution * gridResolution;
 }
 
@@ -501,9 +497,12 @@ __global__ void kernUpdateVelNeighborSearchScattered(
 
 	for (int i = 0; i < M; ++i) {
 		// For each cell, read the start/end indices in the boid pointer array.
+		if (neighbors[i] == -1) {
+			continue;
+		}
 		int startIdx = gridCellStartIndices[neighbors[i]];
 		int endIdx = gridCellEndIndices[neighbors[i]];
-		if (startIdx == -1 && endIdx == -1) {
+		if (startIdx == -1) {
 			continue;
 		}
 		for (int j = startIdx; j <= endIdx; ++j) {
@@ -626,6 +625,9 @@ __global__ void kernUpdateVelNeighborSearchCoherent(
 
 	for (int i = 0; i < M; ++i) {
 		// For each cell, read the start/end indices in the boid pointer array.
+		if (neighbors[i] == -1) {
+			continue;
+		}
 		int startIdx = gridCellStartIndices[neighbors[i]];
 		int endIdx = gridCellEndIndices[neighbors[i]];
 		if (startIdx == -1) {
